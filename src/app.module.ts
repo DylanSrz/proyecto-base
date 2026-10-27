@@ -12,7 +12,10 @@ import { RolesGuard } from './common/guards/roles.guard.js';
 import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
 import { envSchema, type Env } from './config/env.schema.js';
 import { DatabaseModule } from './modules/database/database.module.js';
+import { MechanicsModule } from './modules/mechanics/mechanics.module.js';
 import { UsersModule } from './modules/users/users.module.js';
+import { VehiclesModule } from './modules/vehicles/vehicles.module.js';
+import { WorkshopsModule } from './modules/workshops/workshops.module.js';
 
 @Module({
   imports: [
@@ -37,6 +40,9 @@ import { UsersModule } from './modules/users/users.module.js';
     }),
     UsersModule,
     AuthModule,
+    VehiclesModule,
+    WorkshopsModule,
+    MechanicsModule,
     DatabaseModule,
   ],
   providers: [
