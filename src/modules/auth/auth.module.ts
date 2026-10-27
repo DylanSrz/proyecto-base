@@ -7,18 +7,20 @@ import { ConfigService } from '@nestjs/config';
 import { Env } from '../../config/env.schema.js';
 
 @Module({
-    imports: [
-        UsersModule,
-        JwtModule.registerAsync({
-            global: true,
-            inject: [ConfigService],
-            useFactory: (config: ConfigService<Env, true>) => ({
-                secret: config.get('JWT_SECRET', { infer: true }),
-                signOptions: { expiresIn: config.get('JWT_EXPIRES_IN', { infer: true }) }
-            })
-        })
-    ],
-    controllers: [AuthController],
-    providers: [AuthService],
+  imports: [
+    UsersModule,
+    JwtModule.registerAsync({
+      global: true,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<Env, true>) => ({
+        secret: config.get('JWT_SECRET', { infer: true }),
+        signOptions: {
+          expiresIn: config.get('JWT_EXPIRES_IN', { infer: true }),
+        },
+      }),
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [AuthService],
 })
 export class AuthModule {}

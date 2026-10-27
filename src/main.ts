@@ -10,8 +10,13 @@ async function bootstrap() {
   configureApp(app);
   setupSwagger(app);
 
-  const port = app.get<ConfigService<Env, true>>(ConfigService).get('PORT', { infer: true });
+  const port = app
+    .get<ConfigService<Env, true>>(ConfigService)
+    .get('PORT', { infer: true });
   await app.listen(port);
-  Logger.log(`API http://localhost:${port}/api | Docs http://localhost:${port}/docs`, 'Bootstrap');
+  Logger.log(
+    `API http://localhost:${port}/api | Docs http://localhost:${port}/docs`,
+    'Bootstrap',
+  );
 }
 await bootstrap();

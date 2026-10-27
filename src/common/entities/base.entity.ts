@@ -1,25 +1,29 @@
-import { CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export abstract class AppBaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamptz',
+  })
+  createdAt: Date;
 
-    @CreateDateColumn({
-        name: 'created_at',
-        type: 'timestamptz'
-    })
-    createdAt: Date
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamptz',
+  })
+  updatedAt: Date;
 
-    @UpdateDateColumn({
-        name: 'updated_at',
-        type: 'timestamptz'
-    })
-    updatedAt: Date
-
-    @DeleteDateColumn({
-        name: 'deleted_at',
-        type: 'timestamptz'
-    })
-    deletedAt: Date | null
+  @DeleteDateColumn({
+    name: 'deleted_at',
+    type: 'timestamptz',
+  })
+  deletedAt: Date | null;
 }

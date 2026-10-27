@@ -1,10 +1,10 @@
-import type { Request } from 'express'
-import type { Role } from "../enums/role.enum.js"
+import type { Request } from 'express';
+import type { Role } from '../enums/role.enum.js';
 
 export interface JwtPayload {
-    sub: string
-    email: string
-    role: Role
+  sub: string;
+  email: string;
+  role: Role;
 }
 
-export type AuthRequest = Request & { user: JwtPayload }
+export type AuthRequest = Request & { user: JwtPayload };
