@@ -12,7 +12,6 @@ import { RolesGuard } from './common/guards/roles.guard.js'; // Fase 7
 import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
 import { envSchema, type Env } from './config/env.schema.js';
 import { DatabaseModule } from './modules/database/database.module.js';    // Fase 10
-import { ProductsModule } from './modules/products/products.module.js'; // Fase 8
 import { UsersModule } from './modules/users/users.module.js'; // Fase 7
 
 @Module({
@@ -38,7 +37,6 @@ import { UsersModule } from './modules/users/users.module.js'; // Fase 7
     }),
     UsersModule, // Fase 7
     AuthModule, // Fase 7
-    ProductsModule, // Fase 8
     DatabaseModule,  // Fase 10
   ],
   providers: [
