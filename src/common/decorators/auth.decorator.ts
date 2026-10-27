@@ -11,6 +11,6 @@ export const Auth = (...roles: Role[]) =>
   applyDecorators(
     Roles(...roles),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: 'Token ausente o inválido' }),
-    ApiForbiddenResponse({ description: 'Rol sin permisos' }),
+    ApiUnauthorizedResponse({ description: 'Missing, invalid or expired token' }),
+    ApiForbiddenResponse({ description: 'Role not allowed' }),
   );

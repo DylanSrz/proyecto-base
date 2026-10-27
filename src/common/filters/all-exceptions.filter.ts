@@ -9,6 +9,27 @@ import {
 import type { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
+// PostgreSQL error codes that are client errors, not server failures
+const PG_ERRORS: Record<string, { status: HttpStatus; message: string }> = {
+  '23505': { status: HttpStatus.CONFLICT, message: 'Record already exists' },
+  '23503': {
+    status: HttpStatus.BAD_REQUEST,
+    message: 'A referenced record does not exist',
+  },
+  '22P02': {
+    status: HttpStatus.BAD_REQUEST,
+    message: 'Invalid value for one of the fields',
+  },
+};
+
+/**
+ * Global exception filter: every error leaves the API with the same shape
+ * { success: false, statusCode, message, path, timestamp }.
+ * - HttpException keeps its status and message (validation, auth, 404, 409...).
+ * - Known database errors (unique, foreign key, invalid input) become 4xx,
+ *   so business conflicts never surface as HTTP 500.
+ * - Anything else is logged and answered as a generic 500.
+ */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
@@ -19,7 +40,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const req = ctx.getRequest<Request>();
 
     let status: number = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message: string | string[] = 'Error interno del servidor';
+    let message: string | string[] = 'Internal server error';
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -31,12 +52,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
             exception.message);
     } else if (exception instanceof QueryFailedError) {
       const code = (exception.driverError as { code?: string }).code;
-      if (code === '23505') {
-        status = HttpStatus.CONFLICT;
-        message = 'El registro ya existe';
-      } else if (code === '23503') {
-        status = HttpStatus.BAD_REQUEST;
-        message = 'Se referencia un registro que no existe';
+      const known = code ? PG_ERRORS[code] : undefined;
+      if (known) {
+        status = known.status;
+        message = known.message;
       }
     }
 

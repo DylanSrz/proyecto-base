@@ -4,16 +4,20 @@ import {
   type NestModule,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core'; // Fase 7
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './modules/auth/auth.module.js'; // Fase 7
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js'; // Fase 7
-import { RolesGuard } from './common/guards/roles.guard.js'; // Fase 7
+import { AuthModule } from './modules/auth/auth.module.js';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
+import { RolesGuard } from './common/guards/roles.guard.js';
 import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
 import { envSchema, type Env } from './config/env.schema.js';
-import { DatabaseModule } from './modules/database/database.module.js';    // Fase 10
-import { ProductsModule } from './modules/products/products.module.js'; // Fase 8
-import { UsersModule } from './modules/users/users.module.js'; // Fase 7
+import { DatabaseModule } from './modules/database/database.module.js';
+import { IntegrationsModule } from './modules/integrations/integrations.module.js';
+import { MaintenancesModule } from './modules/maintenances/maintenances.module.js';
+import { MechanicsModule } from './modules/mechanics/mechanics.module.js';
+import { UsersModule } from './modules/users/users.module.js';
+import { VehiclesModule } from './modules/vehicles/vehicles.module.js';
+import { WorkshopsModule } from './modules/workshops/workshops.module.js';
 
 @Module({
   imports: [
@@ -36,13 +40,17 @@ import { UsersModule } from './modules/users/users.module.js'; // Fase 7
         dropSchema: config.get('NODE_ENV', { infer: true }) === 'test',
       }),
     }),
-    UsersModule, // Fase 7
-    AuthModule, // Fase 7
-    ProductsModule, // Fase 8
-    DatabaseModule,  // Fase 10
+    UsersModule,
+    AuthModule,
+    VehiclesModule,
+    WorkshopsModule,
+    MechanicsModule,
+    MaintenancesModule,
+    IntegrationsModule,
+    DatabaseModule,
   ],
   providers: [
-    // Fase 7: descomentar los dos guards (JwtAuthGuard primero)
+    // Global guards, in order: JwtAuthGuard authenticates, RolesGuard authorizes
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],

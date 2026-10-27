@@ -18,6 +18,17 @@ export const envSchema = z.object({
   JWT_EXPIRES_IN: z.coerce.number().default(3600),
   ADMIN_EMAIL: z.email(),
   ADMIN_PASSWORD: z.string().min(8),
+  // Comma-separated list of keys accepted in the x-api-key header (external integrations)
+  API_KEYS: z
+    .string()
+    .min(1)
+    .transform((v) =>
+      v
+        .split(',')
+        .map((key) => key.trim())
+        .filter(Boolean),
+    )
+    .pipe(z.array(z.string().min(8)).min(1)),
 });
 
 export type Env = z.infer<typeof envSchema>;

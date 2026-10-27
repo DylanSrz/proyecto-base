@@ -13,33 +13,33 @@ const toLowerTrim = ({ value }: { value: unknown }) =>
   typeof value === 'string' ? value.trim().toLowerCase() : value;
 
 export class RegisterDto {
-  @ApiProperty({ example: 'Ana Pérez' })
+  @ApiProperty({ example: 'Carlos Perez' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
   name: string;
 
-  @ApiProperty({ example: 'ana@mail.com' })
+  @ApiProperty({ example: 'carlos@fleetcore.com' })
   @Transform(toLowerTrim)
-  @IsEmail({}, { message: 'El email no es válido' })
+  @IsEmail({}, { message: 'email must be a valid email address' })
   email: string;
 
-  @ApiProperty({ example: 'Clave1234' })
+  @ApiProperty({ example: 'Secret1234' })
   @IsString()
   @MinLength(8)
   @Matches(/^(?=.*[A-Z])(?=.*\d).+$/, {
-    message: 'La contraseña necesita al menos una mayúscula y un número',
+    message: 'password must contain at least one uppercase letter and one number',
   })
   password: string;
 }
 
 export class LoginDto {
-  @ApiProperty({ example: 'ana@mail.com' })
+  @ApiProperty({ example: 'carlos@fleetcore.com' })
   @Transform(toLowerTrim)
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'Clave1234' })
+  @ApiProperty({ example: 'Secret1234' })
   @IsString()
   @IsNotEmpty()
   password: string;

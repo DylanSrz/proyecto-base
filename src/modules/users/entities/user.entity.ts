@@ -1,8 +1,7 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, OneToMany, type Relation } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { AppBaseEntity } from '../../../common/entities/base.entity.js';
 import { Role } from '../../../common/enums/role.enum.js';
-import { Product } from '../../products/entities/product.entity.js';
 
 @Entity('users')
 export class User extends AppBaseEntity {
@@ -12,13 +11,10 @@ export class User extends AppBaseEntity {
   @Column({ unique: true, length: 150 })
   email: string;
 
-  @Exclude() // nunca sale en una respuesta
-  @Column({ select: false }) // no se trae en los find normales
+  @Exclude() // never serialized in a response
+  @Column({ select: false }) // not loaded by regular finds
   password: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  @Column({ type: 'enum', enum: Role, default: Role.TECHNICIAN })
   role: Role;
-
-  @OneToMany(() => Product, (product) => product.owner)
-  products: Relation<Product[]>;
 }

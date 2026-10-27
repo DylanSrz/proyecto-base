@@ -1,7 +1,7 @@
 {
-  "name": "prueba-base",
+  "name": "fleetcore-api",
   "version": "0.0.1",
-  "description": "",
+  "description": "FleetCore fleet maintenance management API",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -14,6 +14,8 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "seed": "nest build && node dist/modules/database/seed.js",
+    "seed:prod": "node dist/modules/database/seed.js",
     "lint": "oxlint --type-aware src/ test/",
     "test": "vitest run",
     "test:watch": "vitest",

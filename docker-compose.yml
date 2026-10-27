@@ -1,7 +1,9 @@
+# Full stack:   docker compose up -d --build       (API + PostgreSQL)
+# Dev database: docker compose up -d db db_test    (run the API with npm)
 services:
   db:
     image: postgres:17-alpine
-    container_name: prueba_db
+    container_name: fleetcore_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -11,18 +13,22 @@ services:
       - "${DB_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - fleetcore
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       retries: 5
 
+  # Throwaway database for e2e tests (data lives in memory)
   db_test:
     image: postgres:17-alpine
-    container_name: prueba_db_test
+    container_name: fleetcore_db_test
+    profiles: ["test"]
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: prueba_db_test
+      POSTGRES_DB: fleetcore_test
     ports:
       - "5434:5432"
     tmpfs:
@@ -30,18 +36,25 @@ services:
 
   api:
     build: .
-    profiles: ["full"]
+    container_name: fleetcore_api
+    restart: unless-stopped
     env_file: .env
+    environment:
+      # Inside the compose network the API reaches PostgreSQL by service name
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
     ports:
       - "${PORT}:3000"
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      PORT: 3000
-      DB_HOST: db
-      DB_PORT: 5432
-  
+    networks:
+      - fleetcore
 
 volumes:
   pgdata:
+
+networks:
+  fleetcore:
+    driver: bridge

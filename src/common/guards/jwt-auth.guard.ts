@@ -12,6 +12,11 @@ import type {
   JwtPayload,
 } from '../interfaces/jwt-payload.interface.js';
 
+/**
+ * Global guard (registered with APP_GUARD): every route requires a valid
+ * Bearer token unless it is marked with @Public().
+ * On success the decoded payload is attached to `request.user`.
+ */
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
@@ -29,12 +34,12 @@ export class JwtAuthGuard implements CanActivate {
     const req = ctx.switchToHttp().getRequest<AuthRequest>();
     const [type, token] = req.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer' || !token)
-      throw new UnauthorizedException('Token requerido');
+      throw new UnauthorizedException('Access token is required');
 
     try {
       req.user = await this.jwt.verifyAsync<JwtPayload>(token);
     } catch {
-      throw new UnauthorizedException('Token inválido o expirado');
+      throw new UnauthorizedException('Access token is invalid or expired');
     }
     return true;
   }
