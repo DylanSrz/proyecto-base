@@ -9,6 +9,12 @@ export default defineConfig({
     globals: true,
     root: './',
     include: ['src/**/*.spec.ts'],
+    coverage: {
+      // Measure every source file, not only the ones imported by the tests
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.spec.ts', 'src/main.ts', 'src/modules/database/seed.ts'],
+      reporter: ['text-summary', 'text', 'html'],
+    },
   },
   plugins: [swc.vite({ module: { type: 'es6' } })],
 });
