@@ -12,7 +12,7 @@ bcryptjs · class-validator · Swagger · Vitest + Supertest · Docker
 
 | Name | Clan |
 |------|------|
-| _your name_ | _your clan_ |
+| Dylan Alberto Suárez Laverde| Node.js and Nest.js PM |
 
 ---
 
