@@ -1,3 +1,6 @@
+/**
+ * [ES] Tests unitarios de WorkshopsService con repositorios simulados (mocks).
+ */
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';

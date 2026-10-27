@@ -1,3 +1,6 @@
+/**
+ * [ES] Controlador de talleres. Lectura: ADMIN y TECHNICIAN (el técnico necesita ver dónde trabaja). Escritura: ADMIN.
+ */
 import {
   Body,
   Controller,
@@ -40,6 +43,7 @@ export class WorkshopsController {
   @ApiOperation({ summary: 'List active workshops (paginated)' })
   findAll(@Query() query: QueryWorkshopDto, @CurrentUser('role') role: Role) {
     // Only administrators may see inactive workshops
+    // [ES] Regla de autorización a nivel de dato: un técnico nunca ve talleres inactivos aunque lo pida.
     const includeInactive = role === Role.ADMIN && query.includeInactive;
     return this.workshopsService.findAll({ ...query, includeInactive });
   }

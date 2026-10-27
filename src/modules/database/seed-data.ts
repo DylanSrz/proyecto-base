@@ -1,3 +1,11 @@
+/**
+ * [ES] Datos de demostración del seeder (lo que pide el enunciado):
+ * 1 admin (desde .env) + 2 técnicos, 3 mecánicos (2 activos vinculados a los
+ * técnicos, 1 inactivo), 2 talleres (1 activo, 1 inactivo), 4 vehículos
+ * (2 AVAILABLE, 1 IN_MAINTENANCE, 1 INACTIVE) y mantenimientos COMPLETED para
+ * el historial, más uno IN_PROGRESS y uno SCHEDULED.
+ * [EN] Demo seed data.
+ */
 import { MaintenanceStatus } from '../../common/enums/maintenance-status.enum.js';
 import { MaintenanceType } from '../../common/enums/maintenance-type.enum.js';
 import { RecordStatus } from '../../common/enums/record-status.enum.js';
@@ -85,6 +93,8 @@ export interface SeedMaintenance {
 }
 
 /** Built lazily so relative dates are computed when the seed runs. */
+// [ES] Es una función (no constante) para calcular fechas relativas ("ahora", "mañana")
+// en el momento de ejecutar el seed.
 export const buildMaintenances = (now = new Date()): SeedMaintenance[] => [
   {
     plate: 'ABC123',
@@ -148,6 +158,8 @@ export const buildMaintenances = (now = new Date()): SeedMaintenance[] => [
 ];
 
 /** Status path that leads to each final status, used to build the audit log. */
+// [ES] Camino de estados para generar un log de auditoría coherente con el estado final.
+// Ej: COMPLETED -> logs SCHEDULED, SCHEDULED->IN_PROGRESS, IN_PROGRESS->COMPLETED.
 export const STATUS_PATH: Record<MaintenanceStatus, MaintenanceStatus[]> = {
   [MaintenanceStatus.SCHEDULED]: [MaintenanceStatus.SCHEDULED],
   [MaintenanceStatus.IN_PROGRESS]: [

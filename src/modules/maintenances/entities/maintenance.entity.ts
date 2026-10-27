@@ -1,3 +1,15 @@
+/**
+ * [ES] Entidad Maintenance (tabla maintenances): el corazón del sistema.
+ * - Relaciones N:1 con Vehicle, Mechanic y Workshop. onDelete RESTRICT: la BD
+ *   impide borrar un vehículo/mecánico/taller con mantenimientos (protege el historial).
+ * - scheduledAt + estimatedEndAt: rango horario usado para detectar cruces.
+ * - startedAt: se llena al pasar a IN_PROGRESS.
+ * - workPerformed, finalCost, finishedAt, finalMileage: datos de CIERRE, nulos
+ *   hasta completar (obligatorios para pasar a COMPLETED).
+ * - Índices compuestos (vehicleId, status) y (mechanicId, status): aceleran las
+ *   consultas de "mantenimientos activos" de un vehículo o de un mecánico.
+ * [EN] Maintenance entity.
+ */
 import {
   Column,
   Entity,
@@ -66,6 +78,7 @@ export class Maintenance extends AppBaseEntity {
   @Column({ name: 'final_mileage', type: 'int', nullable: true })
   finalMileage: number | null;
 
+  // [ES] La FK se expone como columna (vehicleId) además de la relación: permite filtrar y crear sin cargar la entidad.
   @Column({ name: 'vehicle_id', type: 'uuid' })
   vehicleId: string;
 

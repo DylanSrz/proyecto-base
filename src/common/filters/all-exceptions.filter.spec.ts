@@ -1,3 +1,6 @@
+/**
+ * [ES] Tests del filtro: conserva HttpException, devuelve lista de errores de validación y traduce errores de PostgreSQL a 4xx.
+ */
 import {
   ArgumentsHost,
   BadRequestException,

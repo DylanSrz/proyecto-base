@@ -1,3 +1,18 @@
+/**
+ * [ES] Filtro global de excepciones (exception filter). @Catch() sin argumentos
+ * atrapa TODO error lanzado en guards, pipes, controladores o servicios.
+ * Responde siempre: { success: false, statusCode, message, path, timestamp }.
+ * - HttpException (NotFound, Conflict, BadRequest, Unauthorized, Forbidden,
+ *   errores de ValidationPipe): conserva su status y mensaje.
+ * - QueryFailedError de PostgreSQL: traduce códigos conocidos a 4xx para que
+ *   los conflictos de negocio/BD NUNCA salgan como 500:
+ *     23505 unique_violation        -> 409
+ *     23503 foreign_key_violation   -> 400
+ *     22P02 invalid_text_representation -> 400
+ * - Cualquier otro error -> 500 genérico y se registra en el log (no se filtran
+ *   detalles internos al cliente).
+ * [EN] Global filter producing one error format and mapping DB errors to 4xx.
+ */
 import {
   Catch,
   HttpException,
@@ -10,6 +25,7 @@ import type { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
 // PostgreSQL error codes that are client errors, not server failures
+// [ES] Tabla de códigos de error de PostgreSQL que son culpa del cliente, no del servidor.
 const PG_ERRORS: Record<string, { status: HttpStatus; message: string }> = {
   '23505': { status: HttpStatus.CONFLICT, message: 'Record already exists' },
   '23503': {
@@ -42,6 +58,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let status: number = HttpStatus.INTERNAL_SERVER_ERROR;
     let message: string | string[] = 'Internal server error';
 
+    // [ES] Errores HTTP lanzados por nosotros (servicios) o por Nest (guards, pipes).
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const body = exception.getResponse();
@@ -50,6 +67,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
           ? body
           : ((body as { message?: string | string[] }).message ??
             exception.message);
+    // [ES] Errores de la base de datos. Ej: dos peticiones crean la misma placa a la vez;
+    // la segunda choca con el índice UNIQUE (23505) y responde 409, no 500.
     } else if (exception instanceof QueryFailedError) {
       const code = (exception.driverError as { code?: string }).code;
       const known = code ? PG_ERRORS[code] : undefined;
@@ -59,6 +78,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       }
     }
 
+    // [ES] Solo los 500 se registran como error: son los que indican un bug real.
     if (status === HttpStatus.INTERNAL_SERVER_ERROR)
       this.logger.error(exception);
 

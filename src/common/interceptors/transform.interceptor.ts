@@ -1,3 +1,12 @@
+/**
+ * [ES] Interceptor de respuesta (response interceptor). GLOBAL.
+ * Un interceptor envuelve la ejecución del controlador: puede actuar ANTES y
+ * DESPUÉS. Aquí actúa después: next.handle() devuelve un Observable con lo que
+ * retornó el controlador, y map() lo envuelve en el formato uniforme:
+ *   { success: true, statusCode, data, timestamp }
+ * Solo aplica a respuestas exitosas; los errores los formatea AllExceptionsFilter.
+ * [EN] Wraps every successful response in the standard envelope.
+ */
 import {
   Injectable,
   type CallHandler,
@@ -27,6 +36,7 @@ export class TransformInterceptor<T> implements NestInterceptor<
     ctx: ExecutionContext,
     next: CallHandler<T>,
   ): Observable<ApiResponse<T>> {
+    // [ES] Se toma el status real de la respuesta (200, 201...) para incluirlo en el cuerpo.
     const res = ctx.switchToHttp().getResponse<Response>();
     return next.handle().pipe(
       map((data) => ({

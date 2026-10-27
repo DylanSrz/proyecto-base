@@ -1,3 +1,8 @@
+/**
+ * [ES] DTO para crear vehículos. Valida FORMA del dato (tipo, rango, regex).
+ * Lo que necesita consultar la BD (placa duplicada) NO va aquí sino en el servicio.
+ * [EN] Create vehicle DTO.
+ */
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
@@ -10,6 +15,7 @@ import {
   Min,
 } from 'class-validator';
 
+// [ES] Normaliza la placa: " abc123 " -> "ABC123". Se reutiliza en el servicio (findByPlate).
 export const normalizePlate = (value: unknown) =>
   typeof value === 'string' ? value.trim().toUpperCase() : value;
 
@@ -37,6 +43,7 @@ export class CreateVehicleDto {
   @ApiProperty({ example: 2022 })
   @IsInt()
   @Min(1950)
+  // [ES] Año máximo = año actual + 1 (modelos del próximo año).
   @Max(new Date().getFullYear() + 1)
   year: number;
 

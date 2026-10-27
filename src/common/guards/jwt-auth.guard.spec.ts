@@ -1,3 +1,6 @@
+/**
+ * [ES] Tests del JwtAuthGuard: ruta @Public, sin token, token inválido/expirado y token válido (payload en request.user).
+ */
 import { UnauthorizedException, type ExecutionContext } from '@nestjs/common';
 import type { Reflector } from '@nestjs/core';
 import type { JwtService } from '@nestjs/jwt';

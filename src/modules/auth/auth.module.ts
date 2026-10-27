@@ -1,3 +1,10 @@
+/**
+ * [ES] Módulo de autenticación. Registra JwtModule como GLOBAL (global: true)
+ * para que JwtAuthGuard (en common) pueda inyectar JwtService sin importar este
+ * módulo. registerAsync + ConfigService: el secreto y la expiración salen del
+ * .env ya validado.
+ * [EN] Auth module; registers JwtModule globally with secret/expiry from env.
+ */
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';

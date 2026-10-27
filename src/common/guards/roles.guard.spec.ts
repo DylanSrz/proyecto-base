@@ -1,3 +1,6 @@
+/**
+ * [ES] Tests del RolesGuard: sin roles declarados pasa, rol permitido pasa, rol no permitido -> 403.
+ */
 import { ForbiddenException, type ExecutionContext } from '@nestjs/common';
 import type { Reflector } from '@nestjs/core';
 import { describe, expect, it, vi } from 'vitest';

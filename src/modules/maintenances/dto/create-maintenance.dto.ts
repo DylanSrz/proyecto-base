@@ -1,3 +1,10 @@
+/**
+ * [ES] DTO para crear mantenimientos. Valida FORMATO: enum válido, UUIDs, fechas,
+ * enteros >= 0. Las reglas que dependen de la BD (vehículo existe y está activo,
+ * mecánico libre, kilometraje vs vehículo) van en el SERVICIO.
+ * @Type(() => Date): convierte el string ISO del JSON a Date antes de @IsDate().
+ * [EN] Create maintenance DTO.
+ */
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {

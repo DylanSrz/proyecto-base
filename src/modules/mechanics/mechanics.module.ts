@@ -1,3 +1,6 @@
+/**
+ * [ES] Módulo de mecánicos. Importa UsersModule para validar el usuario vinculado. Exporta MechanicsService (lo usa maintenances).
+ */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Maintenance } from '../maintenances/entities/maintenance.entity.js';

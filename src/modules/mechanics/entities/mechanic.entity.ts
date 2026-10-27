@@ -1,3 +1,12 @@
+/**
+ * [ES] Entidad Mechanic (tabla mechanics).
+ * - No tiene relación con Workshop: un mecánico NO está atado a un taller; el
+ *   taller se define en cada mantenimiento.
+ * - userId (UNIQUE, nullable): vínculo 1:1 opcional con un usuario TECHNICIAN.
+ *   Es lo que permite a un técnico ver "sus" mantenimientos.
+ * - onDelete SET NULL: si se borrara el usuario, el mecánico y su historial quedan.
+ * [EN] Mechanic entity.
+ */
 import {
   Column,
   Entity,

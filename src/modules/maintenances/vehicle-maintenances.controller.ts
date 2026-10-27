@@ -1,3 +1,6 @@
+/**
+ * [ES] Historial de un vehículo: GET /vehicles/:id/maintenances (ADMIN).
+ */
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '../../common/decorators/auth.decorator.js';

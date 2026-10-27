@@ -1,3 +1,7 @@
+/**
+ * [ES] Configuración de Vitest e2e: NODE_ENV=test (usa .env.test) y fileParallelism false
+ * (las suites comparten la BD de pruebas y no deben correr a la vez).
+ */
 import { defineConfig } from 'vitest/config';
 import swc from 'unplugin-swc';
 

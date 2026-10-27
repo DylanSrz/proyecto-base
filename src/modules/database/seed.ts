@@ -1,3 +1,9 @@
+/**
+ * [ES] Entrada de `npm run seed`. createApplicationContext levanta Nest SIN
+ * servidor HTTP (solo el contenedor DI y la conexión a la BD), ejecuta el seed y
+ * cierra. El finally garantiza cerrar la conexión aunque falle.
+ * [EN] Entry point of the seed command.
+ */
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../../app.module.js';

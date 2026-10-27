@@ -1,3 +1,6 @@
+/**
+ * [ES] Módulo de integraciones externas. Reutiliza MaintenancesService (importa MaintenancesModule).
+ */
 import { Module } from '@nestjs/common';
 import { MaintenancesModule } from '../maintenances/maintenances.module.js';
 import { IntegrationsController } from './integrations.controller.js';

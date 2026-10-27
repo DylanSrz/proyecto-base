@@ -1,3 +1,7 @@
+/**
+ * [ES] Tests de la máquina de estados. it.each ejecuta el mismo test con una tabla
+ * de casos: 4 transiciones válidas y 9 inválidas (todas deben dar 409).
+ */
 import { ConflictException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 import { MaintenanceStatus } from '../../common/enums/maintenance-status.enum.js';

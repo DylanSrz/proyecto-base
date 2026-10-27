@@ -1,3 +1,8 @@
+/**
+ * [ES] Reglas de mecánicos: email único (409), vínculo válido con un usuario
+ * TECHNICIAN no vinculado (400/409), no inactivar con mantenimientos activos
+ * (409). La inactivación conserva el historial (no borra nada).
+ */
 import {
   BadRequestException,
   ConflictException,
@@ -60,6 +65,7 @@ export class MechanicsService {
   }
 
   /** Mechanic profile of a TECHNICIAN user. */
+  /** [ES] Perfil del técnico logueado. 404 si su cuenta no está vinculada a un mecánico. */
   async findByUserId(userId: string) {
     const mechanic = await this.mechanicsRepo.findOne({ where: { userId } });
     if (!mechanic) {
@@ -78,11 +84,13 @@ export class MechanicsService {
       await this.assertUserCanBeLinked(dto.userId);
     Object.assign(mechanic, dto);
     // Drop the loaded relation so the new userId column value is the one saved
+    // [ES] Se descarta la relación cargada: si no, TypeORM usaría user.id viejo y no el nuevo userId.
     const { user: _user, ...data } = mechanic;
     return this.mechanicsRepo.save(data);
   }
 
   /** Inactivation keeps the mechanic and the history of its maintenances. */
+  /** [ES] Inactiva al mecánico; 409 si tiene mantenimientos activos (hay que completarlos o cancelarlos). */
   async deactivate(id: string) {
     const mechanic = await this.findOne(id);
     if (mechanic.status === RecordStatus.INACTIVE) return mechanic;
@@ -114,6 +122,7 @@ export class MechanicsService {
       throw new ConflictException(`Mechanic with email ${email} already exists`);
   }
 
+  /** [ES] El usuario debe existir (404), ser TECHNICIAN (400) y no estar vinculado a otro mecánico (409). */
   private async assertUserCanBeLinked(userId: string) {
     const user = await this.usersService.findOne(userId);
     if (user.role !== Role.TECHNICIAN) {

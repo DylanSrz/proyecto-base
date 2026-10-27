@@ -1,3 +1,6 @@
+/**
+ * [ES] Mantenimientos asignados a un mecánico: GET /mechanics/:id/maintenances (ADMIN).
+ */
 import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '../../common/decorators/auth.decorator.js';

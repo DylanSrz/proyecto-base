@@ -1,3 +1,6 @@
+/**
+ * [ES] Tests del ApiKeyGuard: key válida pasa, sin key o key incorrecta -> 401. ConfigService y ExecutionContext son objetos falsos mínimos.
+ */
 import { UnauthorizedException, type ExecutionContext } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { describe, expect, it } from 'vitest';

@@ -1,3 +1,10 @@
+/**
+ * [ES] DTO del cambio de estado. Los campos de cierre son opcionales AQUÍ porque
+ * solo son obligatorios para COMPLETED: esa regla CONDICIONAL depende del estado
+ * destino y del estado actual, por eso se valida en el servicio con un mensaje
+ * claro ("missing closing information (...)").
+ * [EN] Status change DTO.
+ */
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
@@ -60,6 +67,7 @@ export class UpdateMaintenanceStatusDto {
   note?: string;
 }
 
+// [ES] Lista única de los campos de cierre, reutilizada por las validaciones del servicio.
 export const CLOSING_FIELDS = [
   'workPerformed',
   'finalCost',

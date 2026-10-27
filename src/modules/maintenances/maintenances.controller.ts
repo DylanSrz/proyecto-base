@@ -1,3 +1,9 @@
+/**
+ * [ES] Controlador de mantenimientos. Cada ruta declara su rol con @Auth y valida
+ * el id con ParseUUIDPipe; todo lo demás se delega al servicio.
+ * @CurrentUser() entrega el usuario del token para reglas como "solo el técnico asignado".
+ * [EN] Maintenances controller.
+ */
 import {
   Body,
   Controller,
@@ -54,6 +60,7 @@ export class MaintenancesController {
   }
 
   @Auth(Role.ADMIN)
+  // [ES] Rutas fijas ('active', 'mine') antes de ':id' para que no se tomen como id.
   @Get('active') // static routes are declared before ':id'
   @ApiOperation({ summary: 'List active maintenances (SCHEDULED, IN_PROGRESS)' })
   findActive(@Query() query: PaginationDto) {

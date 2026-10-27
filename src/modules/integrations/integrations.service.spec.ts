@@ -1,3 +1,6 @@
+/**
+ * [ES] Test del mapeo al formato público: verifica que no se filtren campos internos (email).
+ */
 import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MaintenanceStatus } from '../../common/enums/maintenance-status.enum.js';

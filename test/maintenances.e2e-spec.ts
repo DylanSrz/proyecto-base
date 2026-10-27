@@ -1,3 +1,12 @@
+/**
+ * [ES] Test e2e del flujo principal, de punta a punta contra la API real:
+ * 1. Setup por API: talleres, mecánico vinculado al técnico, vehículos.
+ * 2. Autorización: 401 sin token, 403 por rol, 400 por UUID inválido.
+ * 3. Reglas de agenda: vehículo ocupado, cruce de horarios, 9:00 permitido...
+ * 4. Flujo del técnico: iniciar, completar, transiciones inválidas, auditoría.
+ * 5. Integración con x-api-key: sin key, key incorrecta, JWT no sirve, key válida.
+ * Los tests de un describe comparten estado (ids) y corren en orden.
+ */
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';

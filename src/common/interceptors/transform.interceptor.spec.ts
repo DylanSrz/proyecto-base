@@ -1,3 +1,6 @@
+/**
+ * [ES] Test del interceptor: of() crea un Observable con lo que "retornó el controlador" y lastValueFrom lo resuelve.
+ */
 import type { CallHandler, ExecutionContext } from '@nestjs/common';
 import { lastValueFrom, of } from 'rxjs';
 import { describe, expect, it } from 'vitest';

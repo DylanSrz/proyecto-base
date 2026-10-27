@@ -1,3 +1,6 @@
+/**
+ * [ES] Filtros del listado de vehículos: paginación + status + búsqueda de texto.
+ */
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto.js';

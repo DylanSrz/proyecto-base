@@ -1,3 +1,6 @@
+/**
+ * [ES] DTO para crear talleres. @Transform(trim) quita espacios antes de validar.
+ */
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';

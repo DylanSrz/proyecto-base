@@ -1,3 +1,6 @@
+/**
+ * [ES] Tests e2e de autenticación con Supertest: registro, duplicados (409), campos extra (400), login, 401 y 403.
+ */
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';

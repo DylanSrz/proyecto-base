@@ -1,3 +1,17 @@
+/**
+ * [ES] Máquina de estados del mantenimiento (state machine) como FUNCIÓN PURA:
+ * no depende de la BD ni de Nest, por eso es fácil de testear y de leer.
+ *
+ *   SCHEDULED ──> IN_PROGRESS ──> COMPLETED
+ *       │              │
+ *       └──> CANCELLED <┘
+ *
+ * COMPLETED y CANCELLED son estados finales. Cualquier transición fuera del mapa
+ * lanza 409 Conflict con un mensaje que explica el motivo.
+ * ¿Por qué 409? La petición tiene formato válido (no es 400), pero entra en
+ * conflicto con el ESTADO ACTUAL del recurso.
+ * [EN] Pure maintenance state machine.
+ */
 import { ConflictException } from '@nestjs/common';
 import { MaintenanceStatus } from '../../common/enums/maintenance-status.enum.js';
 
@@ -18,10 +32,12 @@ export const ALLOWED_TRANSITIONS: Record<
   [CANCELLED]: [],
 };
 
+// [ES] true si el destino está en la lista de transiciones permitidas del estado origen.
 export const canTransition = (from: MaintenanceStatus, to: MaintenanceStatus) =>
   ALLOWED_TRANSITIONS[from].includes(to);
 
 /** Throws 409 with a descriptive message when the transition is not allowed. */
+// [ES] Lanza ConflictException (409) con un motivo descriptivo si la transición no es válida.
 export function assertTransition(
   from: MaintenanceStatus,
   to: MaintenanceStatus,

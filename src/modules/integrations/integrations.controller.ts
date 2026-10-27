@@ -1,3 +1,10 @@
+/**
+ * [ES] Endpoint para sistemas externos: GET /api/integrations/vehicles/:plate/maintenances.
+ * @ApiKeyAuth() a nivel de CLASE: todas las rutas de este controlador usan
+ * x-api-key en lugar de JWT. Un JWT válido aquí NO sirve (401): son mecanismos
+ * de autenticación distintos para consumidores distintos.
+ * [EN] External integrations controller (x-api-key).
+ */
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiKeyAuth } from '../../common/decorators/api-key-auth.decorator.js';

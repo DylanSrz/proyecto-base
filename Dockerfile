@@ -1,3 +1,7 @@
+# [ES] Imagen de la API en dos etapas (multi-stage build):
+# 1. build: instala todas las dependencias, compila TypeScript y elimina las de desarrollo (npm prune).
+# 2. runtime: solo copia dist y node_modules de producción -> imagen más liviana.
+# Corre con el usuario "node" (no root) por seguridad.
 # --- Build stage: install all dependencies and compile TypeScript ---
 FROM node:24-alpine AS build
 WORKDIR /app

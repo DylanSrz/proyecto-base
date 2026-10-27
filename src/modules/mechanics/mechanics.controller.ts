@@ -1,3 +1,6 @@
+/**
+ * [ES] Controlador de mecánicos: gestión para ADMIN y /mechanics/me para el TECHNICIAN.
+ */
 import {
   Body,
   Controller,
@@ -43,6 +46,7 @@ export class MechanicsController {
   }
 
   @Auth(Role.TECHNICIAN)
+  // [ES] El id del usuario sale del token (@CurrentUser('sub')), no de la URL: nadie puede pedir el perfil de otro.
   @Get('me') // declared before ':id' so it is not captured by it
   @ApiOperation({ summary: 'Mechanic profile of the logged-in technician' })
   @ApiNotFoundResponse({ description: 'User not linked to a mechanic' })

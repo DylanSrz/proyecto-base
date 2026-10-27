@@ -1,3 +1,6 @@
+/**
+ * [ES] Filtros del listado: status, type, vehicleId, mechanicId, workshopId + paginación.
+ */
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto.js';

@@ -1,3 +1,10 @@
+/**
+ * [ES] Servicio del seeder.
+ * - onApplicationBootstrap: hook del ciclo de vida de Nest; al arrancar la app
+ *   asegura que exista el admin (ADMIN_EMAIL / ADMIN_PASSWORD del .env).
+ * - run(): carga los datos demo. Es IDEMPOTENTE: ejecutarlo dos veces no duplica.
+ * [EN] Seeder service (idempotent).
+ */
 import { Injectable, Logger, type OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { hash } from 'bcryptjs';
@@ -32,6 +39,7 @@ export class SeedService implements OnApplicationBootstrap {
   ) {}
 
   /** The admin account must always exist, so it is ensured on every boot. */
+  /** [ES] Hook de arranque: el admin debe existir siempre (lo usan login y tests e2e). */
   async onApplicationBootstrap() {
     await this.ensureAdmin();
   }
@@ -43,6 +51,8 @@ export class SeedService implements OnApplicationBootstrap {
    */
   async run() {
     await this.ensureAdmin();
+    // [ES] Todo el seed en UNA transacción: si algo falla a la mitad, se revierte todo
+    // (no queda la BD con datos a medias).
     const created = await this.dataSource.transaction(async (manager) => {
       const counts = {
         users: 0,
@@ -126,6 +136,7 @@ export class SeedService implements OnApplicationBootstrap {
             workshopId: (workshops.get(seed.workshopName) as Workshop).id,
           },
         );
+        // [ES] Si el mantenimiento ya existía, no se vuelven a crear sus logs (evita duplicados).
         if (!isNew) continue;
         counts.maintenances++;
 
@@ -148,6 +159,7 @@ export class SeedService implements OnApplicationBootstrap {
     return created;
   }
 
+  /** [ES] Crea el admin solo si no existe un usuario con ADMIN_EMAIL. */
   private async ensureAdmin() {
     const email = this.config.get('ADMIN_EMAIL', { infer: true });
     if (await this.usersService.findByEmail(email)) return;
@@ -164,6 +176,14 @@ export class SeedService implements OnApplicationBootstrap {
     this.logger.log(`Admin created: ${email}`);
   }
 
+  /**
+   * [ES] Clave de la idempotencia: busca por una CLAVE NATURAL (email, placa,
+   * nombre del taller, vehículo + descripción) y solo inserta si no existe.
+   * withDeleted: true también encuentra registros con soft delete, para no
+   * intentar recrearlos (chocarían con el índice UNIQUE).
+   * Límite: si cambias la descripción de un mantenimiento en seed-data, se
+   * considera "nuevo" y se insertaría otro.
+   */
   private async findOrCreate<T extends object>(
     manager: EntityManager,
     entity: new () => T,

@@ -1,3 +1,10 @@
+/**
+ * [ES] Entidad de auditoría (audit trail): una fila por cada cambio de estado
+ * (quién, cuándo, de qué estado a cuál y una nota opcional). Se escribe en la
+ * MISMA transacción que el cambio de estado: nunca hay un cambio sin su log.
+ * fromStatus es null en la fila de creación (null -> SCHEDULED).
+ * [EN] Status change audit log.
+ */
 import { Column, Entity, JoinColumn, ManyToOne, type Relation } from 'typeorm';
 import { AppBaseEntity } from '../../../common/entities/base.entity.js';
 import { MaintenanceStatus } from '../../../common/enums/maintenance-status.enum.js';

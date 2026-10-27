@@ -1,3 +1,9 @@
+/**
+ * [ES] Módulo de mantenimientos. Importa VehiclesModule y MechanicsModule para usar
+ * sus servicios. Ellos NO importan este módulo: así no hay dependencia circular.
+ * Por eso las rutas /vehicles/:id/maintenances y /mechanics/:id/maintenances se
+ * declaran aquí, en controladores propios.
+ */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MechanicsModule } from '../mechanics/mechanics.module.js';

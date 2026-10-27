@@ -1,3 +1,7 @@
+/**
+ * [ES] Acceso a datos de usuarios (repositorio TypeORM).
+ * [EN] User data access.
+ */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,6 +22,7 @@ export class UsersService {
     return this.usersRepo.findOne({ where: { email } });
   }
 
+  /** [ES] Único método que trae el password (select explícito): solo lo usa el login. */
   findByEmailWithPassword(email: string) {
     return this.usersRepo.findOne({
       where: { email },
@@ -29,6 +34,7 @@ export class UsersService {
     return this.usersRepo.find({ order: { createdAt: 'DESC' } });
   }
 
+  /** [ES] Busca por id o lanza 404 NotFoundException. */
   async findOne(id: string) {
     const user = await this.usersRepo.findOne({ where: { id } });
     if (!user) throw new NotFoundException(`User ${id} not found`);

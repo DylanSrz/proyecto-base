@@ -1,3 +1,11 @@
+/**
+ * [ES] Reglas de negocio de vehículos (business logic).
+ * Las reglas que necesitan consultar la base de datos o el estado actual viven
+ * en el SERVICIO (el DTO solo ve el body, no sabe qué hay en la BD):
+ * - placa única (409), kilometraje que no baja (400),
+ * - no inactivar un vehículo con mantenimiento activo (409).
+ * [EN] Vehicle business rules.
+ */
 import {
   BadRequestException,
   ConflictException,
@@ -25,6 +33,7 @@ export class VehiclesService {
     private readonly maintenancesRepo: Repository<Maintenance>,
   ) {}
 
+  /** [ES] Crea un vehículo AVAILABLE. 409 si la placa ya existe. */
   async create(dto: CreateVehicleDto) {
     await this.assertPlateIsFree(dto.plate);
     return this.vehiclesRepo.save(
@@ -32,8 +41,10 @@ export class VehiclesService {
     );
   }
 
+  /** [ES] Listado paginado; search busca en placa, marca o modelo (OR) con ILIKE (sin distinguir mayúsculas). */
   async findAll({ page, limit, status, search }: QueryVehicleDto) {
     const base: FindOptionsWhere<Vehicle> = status ? { status } : {};
+    // [ES] Un ARREGLO de condiciones en TypeORM significa OR entre ellas.
     const where = search
       ? ['plate', 'brand', 'model'].map((field) => ({
           ...base,
@@ -49,12 +60,14 @@ export class VehiclesService {
     return paginate(items, total, page, limit);
   }
 
+  /** [ES] Busca por id o 404. */
   async findOne(id: string) {
     const vehicle = await this.vehiclesRepo.findOne({ where: { id } });
     if (!vehicle) throw new NotFoundException(`Vehicle ${id} not found`);
     return vehicle;
   }
 
+  /** [ES] Busca por placa (normalizada) o 404. */
   async findByPlate(plate: string) {
     const normalized = normalizePlate(plate) as string;
     const vehicle = await this.vehiclesRepo.findOne({
@@ -65,6 +78,7 @@ export class VehiclesService {
     return vehicle;
   }
 
+  /** [ES] Actualiza datos. Reglas: placa nueva libre (409) y kilometraje no puede disminuir (400). */
   async update(id: string, dto: UpdateVehicleDto) {
     const vehicle = await this.findOne(id);
     if (dto.plate && dto.plate !== vehicle.plate)
@@ -79,10 +93,12 @@ export class VehiclesService {
   }
 
   /** Logical deletion: the vehicle and its maintenance history are kept. */
+  // [ES] Inactivación (eliminación lógica): conserva el vehículo y su historial.
   async deactivate(id: string) {
     const vehicle = await this.findOne(id);
     if (vehicle.status === VehicleStatus.INACTIVE) return vehicle;
 
+    // [ES] exists() hace un SELECT liviano (LIMIT 1) en vez de traer filas.
     const hasActiveMaintenance = await this.maintenancesRepo.exists({
       where: { vehicleId: id, status: In(ACTIVE_MAINTENANCE_STATUSES) },
     });
@@ -95,6 +111,7 @@ export class VehiclesService {
     return this.vehiclesRepo.save(vehicle);
   }
 
+  /** [ES] Solo cambia INACTIVE -> AVAILABLE; nunca saca un vehículo de IN_MAINTENANCE. */
   async activate(id: string) {
     const vehicle = await this.findOne(id);
     if (vehicle.status !== VehicleStatus.INACTIVE) return vehicle;
@@ -102,6 +119,7 @@ export class VehiclesService {
     return this.vehiclesRepo.save(vehicle);
   }
 
+  /** [ES] 409 si la placa existe (withDeleted: incluye registros con soft delete). */
   private async assertPlateIsFree(plate: string) {
     const exists = await this.vehiclesRepo.exists({
       where: { plate },

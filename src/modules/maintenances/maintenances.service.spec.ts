@@ -1,3 +1,16 @@
+/**
+ * [ES] Tests unitarios de MaintenancesService (las reglas más importantes).
+ * Cómo se simula la base de datos:
+ * - dataSource.transaction(cb) se reemplaza por una función que llama cb(manager)
+ *   con un `manager` falso.
+ * - manager.findOne devuelve lo que haya en el objeto `db` según la entidad
+ *   pedida (Vehicle, Mechanic, Workshop, Maintenance).
+ * - manager.exists responde según `existsAnswers` (ej: "el vehículo ya está ocupado").
+ * - createQueryBuilder devuelve un builder falso cuyo getOne() retorna `overlapping`
+ *   (para simular un cruce de horarios).
+ * Cada test cambia solo el dato que necesita (Arrange), llama al servicio (Act)
+ * y verifica el resultado o la excepción (Assert).
+ */
 import {
   BadRequestException,
   ConflictException,
@@ -157,6 +170,7 @@ describe('MaintenancesService', () => {
     service = moduleRef.get(MaintenancesService);
   });
 
+  // [ES] Reglas de creación: existencia, estado activo, kilometraje, vehículo ocupado, cruce de horarios.
   describe('create', () => {
     it('creates a SCHEDULED maintenance and its first audit entry', async () => {
       // Act
@@ -236,6 +250,7 @@ describe('MaintenancesService', () => {
     });
   });
 
+  // [ES] Reglas de cambio de estado: efectos en el vehículo, datos de cierre, transiciones y permisos del técnico.
   describe('updateStatus', () => {
     it('SCHEDULED → IN_PROGRESS puts the vehicle IN_MAINTENANCE', async () => {
       await service.updateStatus(
@@ -454,6 +469,7 @@ describe('MaintenancesService', () => {
     });
   });
 
+  // [ES] Consultas: autorización por recurso, filtros y paginación.
   describe('queries', () => {
     it('findOne forbids technicians from reading other assignments', async () => {
       db.maintenance = buildMaintenance({

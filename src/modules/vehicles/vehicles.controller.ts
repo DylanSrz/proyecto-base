@@ -1,3 +1,9 @@
+/**
+ * [ES] Controlador de vehículos. Responsabilidades del controlador: definir la
+ * ruta, el rol (@Auth), validar parámetros (ParseUUIDPipe) y delegar al servicio.
+ * NO contiene reglas de negocio.
+ * [EN] Vehicles controller.
+ */
 import {
   Body,
   Controller,
@@ -42,6 +48,7 @@ export class VehiclesController {
   }
 
   @Auth(Role.ADMIN, Role.TECHNICIAN)
+  // [ES] Va antes de ':id': si no, la ruta ':id' capturaría "plate" como si fuera un id.
   @Get('plate/:plate') // declared before ':id' so it is not captured by it
   @ApiOperation({ summary: 'Get a vehicle by plate' })
   @ApiNotFoundResponse({ description: 'Vehicle not found' })
@@ -53,6 +60,7 @@ export class VehiclesController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a vehicle by id' })
   @ApiNotFoundResponse({ description: 'Vehicle not found' })
+  // [ES] ParseUUIDPipe: si el id no es UUID responde 400 sin llegar al servicio ni a la BD.
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.vehiclesService.findOne(id);
   }

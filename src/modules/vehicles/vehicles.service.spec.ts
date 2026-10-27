@@ -1,3 +1,8 @@
+/**
+ * [ES] Tests unitarios de VehiclesService (Vitest, patrón AAA: Arrange-Act-Assert).
+ * Los repositorios se reemplazan por objetos con vi.fn() (mocks) mediante
+ * getRepositoryToken(Entidad): así se prueba SOLO la lógica del servicio, sin BD.
+ */
 import {
   BadRequestException,
   ConflictException,
@@ -32,6 +37,7 @@ describe('VehiclesService', () => {
     status: VehicleStatus.AVAILABLE,
   });
 
+  // [ES] Antes de cada test: limpia mocks y crea un módulo de testing con los mocks inyectados.
   beforeEach(async () => {
     vi.clearAllMocks();
     const moduleRef = await Test.createTestingModule({

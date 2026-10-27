@@ -1,3 +1,6 @@
+/**
+ * [ES] Módulo de usuarios. Exporta UsersService para auth, mechanics y el seed.
+ */
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import { UsersController } from './users.controller.js';

@@ -1,3 +1,6 @@
+/**
+ * [ES] DTO para crear mecánicos. userId es opcional y debe ser UUID; las reglas sobre ese usuario se validan en el servicio.
+ */
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {

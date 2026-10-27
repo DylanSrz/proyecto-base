@@ -1,3 +1,9 @@
+# [ES] Servicios:
+# - db: PostgreSQL con volumen pgdata (los datos sobreviven a reinicios).
+# - db_test: BD en memoria (tmpfs) para e2e; perfil "test", se levanta nombrándolo.
+# - api: la API; dentro de la red usa DB_HOST=db (nombre del servicio, DNS interno).
+# La red "fleetcore" comunica api y db; depends_on + healthcheck espera a que
+# PostgreSQL esté listo antes de iniciar la API.
 # Full stack:   docker compose up -d --build       (API + PostgreSQL)
 # Dev database: docker compose up -d db db_test    (run the API with npm)
 services:

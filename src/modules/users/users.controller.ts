@@ -1,3 +1,7 @@
+/**
+ * [ES] Endpoints de usuarios: /users/me (cualquier rol) y listado/detalle (solo ADMIN).
+ * [EN] User endpoints.
+ */
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import { ApiTags } from '@nestjs/swagger';

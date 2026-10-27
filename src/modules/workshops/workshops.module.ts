@@ -1,3 +1,6 @@
+/**
+ * [ES] Módulo de talleres. Registra Maintenance para validar mantenimientos activos al inactivar.
+ */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Maintenance } from '../maintenances/entities/maintenance.entity.js';

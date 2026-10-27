@@ -1,3 +1,6 @@
+/**
+ * [ES] Reglas de talleres: nombre único (409), listar activos por defecto, no inactivar con mantenimientos activos (409).
+ */
 import {
   ConflictException,
   Injectable,
@@ -29,6 +32,7 @@ export class WorkshopsService {
   }
 
   /** Lists active workshops; inactive ones only when explicitly requested. */
+  /** [ES] El enunciado pide listar los talleres ACTIVOS; los inactivos solo bajo pedido del admin. */
   async findAll({ page, limit, includeInactive }: QueryWorkshopDto) {
     const [items, total] = await this.workshopsRepo.findAndCount({
       where: includeInactive ? {} : { status: RecordStatus.ACTIVE },
@@ -53,6 +57,7 @@ export class WorkshopsService {
     return this.workshopsRepo.save(workshop);
   }
 
+  /** [ES] 409 si el taller tiene mantenimientos SCHEDULED/IN_PROGRESS. */
   async deactivate(id: string) {
     const workshop = await this.findOne(id);
     if (workshop.status === RecordStatus.INACTIVE) return workshop;

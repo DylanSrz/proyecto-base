@@ -1,3 +1,8 @@
+/**
+ * [ES] Tests unitarios de AuthService. UsersService y JwtService se reemplazan por
+ * mocks: se verifica que la contraseña se guarde hasheada, que el rol sea siempre
+ * TECHNICIAN y que el login falle con 401 en ambos casos (email o password).
+ */
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';

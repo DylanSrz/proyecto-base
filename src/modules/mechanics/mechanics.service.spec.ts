@@ -1,3 +1,6 @@
+/**
+ * [ES] Tests unitarios de MechanicsService. UsersService también se reemplaza por un mock.
+ */
 import {
   BadRequestException,
   ConflictException,
@@ -86,6 +89,7 @@ describe('MechanicsService', () => {
 
     it('rejects a user already linked to another mechanic', async () => {
       mechanicsRepo.exists
+        // [ES] mockResolvedValueOnce encadenado: 1ª llamada a exists() = false, 2ª = true.
         .mockResolvedValueOnce(false) // email check
         .mockResolvedValueOnce(true); // user already linked
       usersService.findOne.mockResolvedValue({

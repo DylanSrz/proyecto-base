@@ -1,3 +1,7 @@
+/**
+ * [ES] Configuración de Vitest para tests unitarios (archivos .spec.ts dentro de src). swc compila TypeScript con decoradores.
+ * La cobertura mide TODO src/ (no solo los archivos importados por los tests).
+ */
 import { defineConfig } from 'vitest/config';
 import swc from 'unplugin-swc';
 

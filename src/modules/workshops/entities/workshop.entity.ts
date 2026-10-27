@@ -1,3 +1,6 @@
+/**
+ * [ES] Entidad Workshop (tabla workshops). name UNIQUE; status ACTIVE/INACTIVE. 1:N con Maintenance.
+ */
 import { Column, Entity, OneToMany, type Relation } from 'typeorm';
 import { AppBaseEntity } from '../../../common/entities/base.entity.js';
 import { RecordStatus } from '../../../common/enums/record-status.enum.js';
