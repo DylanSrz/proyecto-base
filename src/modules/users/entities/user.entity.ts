@@ -1,7 +1,8 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany, type Relation } from 'typeorm';
 import { AppBaseEntity } from '../../../common/entities/base.entity.js';
 import { Role } from '../../../common/enums/role.enum.js';
+import { Product } from '../../products/entities/product.entity.js';
 
 @Entity('users')
 export class User extends AppBaseEntity {
@@ -17,4 +18,7 @@ export class User extends AppBaseEntity {
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role;
+
+  @OneToMany(() => Product, (product) => product.owner)
+  products: Relation<Product[]>;
 }
