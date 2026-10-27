@@ -1,55 +1,95 @@
 import type { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { AppModule } from '../src/app.module.js';
-import { configureApp } from '../src/app.setup.js';
+import {
+  ADMIN_CREDENTIALS,
+  createTestApp,
+  login,
+} from './utils/create-test-app.js';
 
 describe('Auth (e2e)', () => {
-    let app: INestApplication;
-    let token: string;
-    const user = { name: 'Test', email: 'test@mail.com', password: 'Clave1234' };
+  let app: INestApplication;
+  let token: string;
+  const user = {
+    name: 'Test User',
+    email: 'test@fleetcore.com',
+    password: 'Secret1234',
+  };
 
-    beforeAll(async () => {
-        const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
-        app = moduleRef.createNestApplication();
-        configureApp(app); // misma configuración que main.ts
-        await app.init();
+  beforeAll(async () => {
+    app = await createTestApp();
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('registers a technician → 201 without exposing the password', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/auth/register')
+      .send(user)
+      .expect(201);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data.accessToken).toBeDefined();
+    expect(res.body.data.user.role).toBe('TECHNICIAN');
+    expect(res.body.data.user.password).toBeUndefined();
+  });
+
+  it('rejects a duplicated email → 409', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/auth/register')
+      .send(user)
+      .expect(409);
+    expect(res.body).toMatchObject({
+      success: false,
+      statusCode: 409,
+      path: '/api/auth/register',
     });
+  });
 
-    afterAll(async () => {
-        await app.close();
-    });
+  it('rejects extra fields such as role → 400', () =>
+    request(app.getHttpServer())
+      .post('/api/auth/register')
+      .send({ ...user, email: 'other@fleetcore.com', role: 'ADMIN' })
+      .expect(400));
 
-    it('registra un usuario → 201', async () => {
-        const res = await request(app.getHttpServer()).post('/api/auth/register').send(user).expect(201);
-        expect(res.body.data.accessToken).toBeDefined();
-        expect(res.body.data.user.password).toBeUndefined();
-    });
+  it('logs in → 200 with token', async () => {
+    token = await login(app, { email: user.email, password: user.password });
+    expect(token).toBeDefined();
+  });
 
-    it('rechaza email duplicado → 409', () =>
-        request(app.getHttpServer()).post('/api/auth/register').send(user).expect(409));
+  it('rejects a wrong password → 401', () =>
+    request(app.getHttpServer())
+      .post('/api/auth/login')
+      .send({ email: user.email, password: 'Wrong1234' })
+      .expect(401));
 
-    it('rechaza campos extra como role → 400', () =>
-        request(app.getHttpServer())
-            .post('/api/auth/register')
-            .send({ ...user, email: 'otro@mail.com', role: 'admin' })
-            .expect(400));
+  it('GET /api/users/me without token → 401', () =>
+    request(app.getHttpServer()).get('/api/users/me').expect(401));
 
-    it('hace login → 200 con token', async () => {
-        const res = await request(app.getHttpServer())
-            .post('/api/auth/login')
-            .send({ email: user.email, password: user.password })
-            .expect(200);
-        token = res.body.data.accessToken;
-    });
+  it('GET /api/users/me with an invalid token → 401', () =>
+    request(app.getHttpServer())
+      .get('/api/users/me')
+      .set('Authorization', 'Bearer not-a-real-token')
+      .expect(401));
 
-    it('GET /api/users/me sin token → 401', () =>
-        request(app.getHttpServer()).get('/api/users/me').expect(401));
+  it('GET /api/users/me with token → 200', () =>
+    request(app.getHttpServer())
+      .get('/api/users/me')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200));
 
-    it('GET /api/users/me con token → 200', () =>
-        request(app.getHttpServer()).get('/api/users/me').set('Authorization', `Bearer ${token}`).expect(200));
+  it('GET /api/users as technician → 403', () =>
+    request(app.getHttpServer())
+      .get('/api/users')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(403));
 
-    it('GET /api/users con rol user → 403', () =>
-        request(app.getHttpServer()).get('/api/users').set('Authorization', `Bearer ${token}`).expect(403));
+  it('GET /api/users as the seeded admin → 200', async () => {
+    const adminToken = await login(app, ADMIN_CREDENTIALS);
+    await request(app.getHttpServer())
+      .get('/api/users')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200);
+  });
 });

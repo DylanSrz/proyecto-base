@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
+import { Role } from '../../common/enums/role.enum.js';
 import type { JwtPayload } from '../../common/interfaces/jwt-payload.interface.js';
 import type { User } from '../users/entities/user.entity.js';
 import { UsersService } from '../users/users.service.js';
@@ -19,17 +20,22 @@ export class AuthService {
 
   async register(dto: RegisterDto) {
     const exists = await this.usersService.findByEmail(dto.email);
-    if (exists) throw new ConflictException('El email ya está registrado');
+    if (exists) throw new ConflictException('Email is already registered');
 
     const password = await hash(dto.password, 10);
-    const user = await this.usersService.create({ ...dto, password });
+    // Public sign-up always creates a technician; the admin comes from the seed
+    const user = await this.usersService.create({
+      ...dto,
+      password,
+      role: Role.TECHNICIAN,
+    });
     return this.buildAuthResponse(user);
   }
 
   async login(dto: LoginDto) {
     const user = await this.usersService.findByEmailWithPassword(dto.email);
     if (!user || !(await compare(dto.password, user.password))) {
-      throw new UnauthorizedException('Credenciales inválidas'); // mismo mensaje en ambos casos
+      throw new UnauthorizedException('Invalid credentials'); // same message for both cases
     }
     return this.buildAuthResponse(user);
   }

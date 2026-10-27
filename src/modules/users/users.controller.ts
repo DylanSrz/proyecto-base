@@ -10,8 +10,8 @@ import { Role } from '../../common/enums/role.enum.js';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Auth() // cualquier usuario logueado
-  @Get('me') // va ANTES de ':id' o ':id' se lo traga
+  @Auth() // any authenticated user
+  @Get('me') // must be declared BEFORE ':id' or ':id' would match it
   me(@CurrentUser('sub') userId: string) {
     return this.usersService.findOne(userId);
   }

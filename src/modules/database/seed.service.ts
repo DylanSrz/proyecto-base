@@ -19,11 +19,11 @@ export class SeedService implements OnApplicationBootstrap {
         if (await this.usersService.findByEmail(email)) return;
 
         await this.usersService.create({
-            name: 'Administrador',
+            name: 'Administrator',
             email,
             password: await hash(this.config.get('ADMIN_PASSWORD', { infer: true }), 10),
             role: Role.ADMIN,
         });
-        this.logger.log(`Admin creado: ${email}`);
+        this.logger.log(`Admin created: ${email}`);
     }
 }

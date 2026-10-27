@@ -12,19 +12,19 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 export function configureApp(app: INestApplication) {
   app.setGlobalPrefix('api');
   app.enableCors();
-  app.use(helmet()); // si Swagger se ve en blanco: helmet({ contentSecurityPolicy: false })
+  app.use(helmet()); // if Swagger renders blank: helmet({ contentSecurityPolicy: false })
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // borra propiedades que no están en el DTO
-      forbidNonWhitelisted: true, // y si llegan, responde 400
-      transform: true, // convierte el body en instancia del DTO
+      whitelist: true, // strips properties that are not in the DTO
+      forbidNonWhitelisted: true, // and answers 400 when they are sent
+      transform: true, // turns the body into a DTO instance
       transformOptions: { enableImplicitConversion: true },
     }),
   );
 
-  // En la respuesta actúa primero el último: ClassSerializer quita los @Exclude
-  // y después TransformInterceptor envuelve el resultado.
+  // On the way out the last one runs first: ClassSerializer removes @Exclude
+  // fields and then TransformInterceptor wraps the result.
   app.useGlobalInterceptors(
     new TransformInterceptor(),
     new ClassSerializerInterceptor(app.get(Reflector)),
@@ -35,9 +35,11 @@ export function configureApp(app: INestApplication) {
 
 export function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
-    .setTitle('API Prueba de desempeño')
+    .setTitle('FleetCore API')
     .setVersion('1.0')
+    .setDescription('Fleet maintenance management API')
     .addBearerAuth()
+    .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'x-api-key')
     .build();
   SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, config));
 }

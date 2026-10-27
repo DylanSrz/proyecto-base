@@ -14,6 +14,10 @@ export interface ApiResponse<T> {
   timestamp: string;
 }
 
+/**
+ * Global interceptor: wraps every successful response as
+ * { success: true, statusCode, data, timestamp } so all endpoints share one format.
+ */
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<
   T,

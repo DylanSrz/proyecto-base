@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:17-alpine
-    container_name: prueba_db
+    container_name: fleetcore_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -18,11 +18,11 @@ services:
 
   db_test:
     image: postgres:17-alpine
-    container_name: prueba_db_test
+    container_name: fleetcore_db_test
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: prueba_db_test
+      POSTGRES_DB: fleetcore_test
     ports:
       - "5434:5432"
     tmpfs:
